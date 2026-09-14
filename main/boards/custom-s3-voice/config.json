@@ -1,0 +1,10 @@
+{
+  "type": "custom-s3-voice",
+  "target": "esp32s3",
+  "builds": [
+    {
+      "name": "custom-s3-voice",
+      "sdkconfig_append": []
+    }
+  ]
+}

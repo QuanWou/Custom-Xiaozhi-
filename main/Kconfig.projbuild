@@ -161,6 +161,9 @@ choice BOARD_TYPE
     config BOARD_TYPE_BREAD_COMPACT_ESP32
         bool "Bread Compact ESP32 DevKit (面包板)"
         depends on IDF_TARGET_ESP32
+    config BOARD_TYPE_CUSTOM_S3_VOICE
+        bool "Custom ESP32-S3 Voice"
+        depends on IDF_TARGET_ESP32S3
     config BOARD_TYPE_BREAD_COMPACT_ESP32_LCD
         bool "Bread Compact ESP32 DevKit + LCD (面包板)"
         depends on IDF_TARGET_ESP32
@@ -785,7 +788,7 @@ choice WK_BOARD_TYPE
     config BOARD_HAVE_MOTOR_CONTROL
         bool "带电机驱动"
     config BOARD_NO_MOTOR_CONTROL
-        bool "不带电机驱动"    
+        bool "不带电机驱动"
 endchoice
 
 
