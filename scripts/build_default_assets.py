@@ -18,6 +18,7 @@ import shutil
 import sys
 import json
 import struct
+import stat
 from datetime import datetime
 
 
@@ -128,6 +129,19 @@ def pack_models(model_path, out_file="srmodels.bin"):
 # Build assets functions (from build.py)
 # =============================================================================
 
+def remove_build_tree(directory):
+    """Remove model staging files, including copied read-only Windows directories."""
+    def retry_readonly(function, path, exc_info):
+        if os.name != "nt" or not isinstance(exc_info[1], PermissionError):
+            raise exc_info[1]
+        if os.stat(path).st_mode & stat.S_IWRITE:
+            raise exc_info[1]
+        os.chmod(path, stat.S_IWRITE | stat.S_IREAD)
+        function(path)
+
+    shutil.rmtree(directory, onerror=retry_readonly)
+
+
 def ensure_dir(directory):
     """Ensure directory exists, create if not"""
     os.makedirs(directory, exist_ok=True)
@@ -219,7 +233,7 @@ def process_sr_models(wakenet_model_dirs, multinet_model_dirs, build_dir, assets
     # Create SR models build directory
     sr_models_build_dir = os.path.join(build_dir, "srmodels")
     if os.path.exists(sr_models_build_dir):
-        shutil.rmtree(sr_models_build_dir)
+        remove_build_tree(sr_models_build_dir)
     os.makedirs(sr_models_build_dir)
     
     models_processed = 0
@@ -821,7 +835,7 @@ def build_assets_integrated(wakenet_model_paths, multinet_model_paths, text_font
     try:
         # Clean and create directories
         if os.path.exists(temp_build_dir):
-            shutil.rmtree(temp_build_dir)
+            remove_build_tree(temp_build_dir)
         ensure_dir(temp_build_dir)
         ensure_dir(assets_dir)
         
@@ -879,7 +893,7 @@ def build_assets_integrated(wakenet_model_paths, multinet_model_paths, text_font
     finally:
         # Clean up temporary directory
         if os.path.exists(temp_build_dir):
-            shutil.rmtree(temp_build_dir)
+            remove_build_tree(temp_build_dir)
 
 
 def main():

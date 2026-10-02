@@ -1,5 +1,7 @@
 import importlib.util
 import json
+import os
+import stat
 import re
 import tempfile
 import unittest
@@ -15,6 +17,19 @@ SPEC.loader.exec_module(BUILD)
 
 
 class BuildDefaultAssetsTest(unittest.TestCase):
+    @unittest.skipUnless(os.name == "nt", "Windows read-only staging directories")
+    def test_cleanup_removes_readonly_model_staging(self):
+        with tempfile.TemporaryDirectory() as directory:
+            staging = Path(directory) / "staging"
+            model = staging / "srmodels" / "wn9_hiwalle_tts2"
+            model.mkdir(parents=True)
+            data = model / "model.bin"
+            data.write_bytes(b"model")
+            os.chmod(data, stat.S_IREAD)
+            os.chmod(model, stat.S_IREAD)
+            BUILD.remove_build_tree(staging)
+            self.assertFalse(staging.exists())
+
     def test_text_font_metadata_uses_bundle_charset_size_and_bpp(self):
         with tempfile.TemporaryDirectory() as directory:
             assets = Path(directory)

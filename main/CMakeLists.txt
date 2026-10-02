@@ -156,7 +156,11 @@ elseif(CONFIG_BOARD_TYPE_KEVIN_YUYING_313LCD)
     set(DEFAULT_EMOJI_COLLECTION noto-color-emoji_64)
 elseif(CONFIG_BOARD_TYPE_CUSTOM_S3_VOICE)
     set(BOARD_DIR "custom-s3-voice")
-    set(BUILTIN_TEXT_FONT font_noto_sans_basic_20_4)
+    list(APPEND SOURCES
+        "robot_face_ui/robot_face_ui.cc"
+        "robot_face_ui/robot_face_animator.cc"
+    )
+    set(BUILTIN_TEXT_FONT font_noto_sans_basic_14_1)
     set(BUILTIN_ICON_FONT font_material_symbols_20_4)
 elseif(CONFIG_BOARD_TYPE_LICHUANG_DEV_S3)
     set(BOARD_DIR "lckfb/szpi-esp32s3")
